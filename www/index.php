@@ -18,6 +18,7 @@ if ($_SERVER['REQUEST_URI'] == '/api/analyze-activity') {
             if (isset($requestBody['activity']) && isset($requestBody['subject'])) {
                 // require the SubjectExplorer class
                 require_once '../src/SubjectExplorer.php';
+                require_once '../src/Db.php';
 
                 // create a new SubjectExplorer object
                 $subjectExplorer = new SubjectExplorer();
@@ -33,6 +34,12 @@ if ($_SERVER['REQUEST_URI'] == '/api/analyze-activity') {
                 if ($response != '') {
                     // return the response
                     echo json_encode(['response' => $response]);
+                    $DB = new Db();
+                    $DB->prepExec('INSERT INTO `activities` (`activity`, `subject`, `response`,`added_date`) VALUES (:activity, :subject, :response,NOW())', [
+                        'activity' => $requestBody['activity'],
+                        'subject' => $requestBody['subject'],
+                        'response' => $response
+                    ]);
                 } else {
                     // return an error
                     echo json_encode(['error' => 'There was an error analyzing the activity.']);
