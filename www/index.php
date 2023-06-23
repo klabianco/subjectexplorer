@@ -138,7 +138,7 @@ if ($_SERVER['REQUEST_URI'] == '/api/analyze-activity') {
             <div class="container">
                 <form id="activity-form">
                     <label for="activity">Activity:</label>
-                    <input type="text" id="activity" name="activity" class="form-control mb-2 mr-sm-2" placeholder="E.g., 'My child built a LEGO tower'" required>
+                    <input type="text" id="activity" name="activity" class="form-control mb-2 mr-sm-2" placeholder="E.g., 'My child built a LEGO tower' (More detailed = better analysis)" required>
                     <label for="grade">Developmental Grade:</label>
                     <select class="form-control mb-2 mr-sm-2" id="grade" name="grade">
                         <option value="">Select Developmental Grade...</option>

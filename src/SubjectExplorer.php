@@ -12,9 +12,9 @@ class SubjectExplorer
             $grade = '';
             if($this->grade != '') $grade = $this->grade.'-grade';
 
-            $prompt = 'Description: "' . $this->activity . '”
+            $prompt = 'Activity: "' . $this->activity . '”
         
-Only write individual bullet points of how the '.$grade.' child has already learned specific concepts in the subject of "' . $this->subject . '". Do not assume the child used any materials beyond those mentioned in the description. Output in html starting with <ul>.  After the list, output a <p> student "I can" statement.';
+Only write bullet points of how the '.$grade.' child has learned specific concepts from the activity in the subject of "' . $this->subject . '". Do not assume the child used any materials beyond those mentioned in the description. Output in html starting with <ul>. Include a <p> short paragraph for tips on creative ways for continued development related to the activity.';
 
             $AI = new AI();
             $AI->setPrompt($prompt);
