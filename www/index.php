@@ -144,7 +144,7 @@ if ($_SERVER['REQUEST_URI'] == '/api/analyze-activity') {
                         <option value="">Select Developmental Grade...</option>
                         <option value="Toddler">Toddler</option>
                         <option value="Preschool">Preschool</option>
-                        <option value="Transitional-Kindergarten">English</option>
+                        <option value="Transitional-Kindergarten">Transitional Kindergarten</option>
                         <option value="Kindergarten">Kindergarten</option>
                         <option value="First">1st Grade</option>
                         <option value="Second">2nd Grade</option>
