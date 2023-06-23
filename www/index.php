@@ -26,6 +26,7 @@ if ($_SERVER['REQUEST_URI'] == '/api/analyze-activity') {
                 // set the activity and subject
                 $subjectExplorer->activity = $requestBody['activity'];
                 $subjectExplorer->subject = $requestBody['subject'];
+                $subjectExplorer->grade = $requestBody['grade'];
 
                 // get the response from OpenAI
                 $response = $subjectExplorer->getResponseFromOpenAi();
@@ -35,9 +36,10 @@ if ($_SERVER['REQUEST_URI'] == '/api/analyze-activity') {
                     // return the response
                     echo json_encode(['response' => $response]);
                     $DB = new Db();
-                    $DB->prepExec('INSERT INTO `activities` (`activity`, `subject`, `response`,`added_date`) VALUES (:activity, :subject, :response,NOW())', [
+                    $DB->prepExec('INSERT INTO `activities` (`activity`, `subject`, `grade`, `response`,`added_date`) VALUES (:activity, :subject, :grade, :response,NOW())', [
                         'activity' => $requestBody['activity'],
                         'subject' => $requestBody['subject'],
+                        'grade' => $requestBody['grade'],
                         'response' => $response
                     ]);
                 } else {
@@ -132,6 +134,26 @@ if ($_SERVER['REQUEST_URI'] == '/api/analyze-activity') {
                 <form id="activity-form">
                     <label for="activity">Activity:</label>
                     <input type="text" id="activity" name="activity" class="form-control mb-2 mr-sm-2" placeholder="E.g., 'My child built a LEGO tower'" required>
+                    <label for="grade">Developmental Grade:</label>
+                    <select class="form-control mb-2 mr-sm-2" id="grade" name="grade">
+                        <option value="">Select Developmental Grade...</option>
+                        <option value="Toddler">Toddler</option>
+                        <option value="Preschool">Preschool</option>
+                        <option value="Transitional-Kindergarten">English</option>
+                        <option value="Kindergarten">Kindergarten</option>
+                        <option value="First">1st Grade</option>
+                        <option value="Second">2nd Grade</option>
+                        <option value="Third">3rd Grade</option>
+                        <option value="Fourth">4th Grade</option>
+                        <option value="Fifth">5th Grade</option>
+                        <option value="Sixth">6th Grade</option>
+                        <option value="Seventh">7th Grade</option>
+                        <option value="Eighth">8th Grade</option>
+                        <option value="Ninth">9th Grade</option>
+                        <option value="Tenth">10th Grade</option>
+                        <option value="Eleventh">11th Grade</option>
+                        <option value="Twelfth">12th Grade</option>
+                    </select>
                     <label for="activity">Subject:</label>
                     <select class="form-control mb-2 mr-sm-2" id="subject" name="subject">
                         <option value="Math">Math</option>
@@ -162,7 +184,7 @@ if ($_SERVER['REQUEST_URI'] == '/api/analyze-activity') {
             </div>
         </section>
     </main>
-    <footer>
+    <footer class="mt-5 mb-5">
         <div class="container">
             <p class="text-center">&copy; 2023 Subject Explorer. <!--All rights reserved.--></p>
         </div>
@@ -180,6 +202,7 @@ if ($_SERVER['REQUEST_URI'] == '/api/analyze-activity') {
         function analyzeActivity() {
             let activity = $("#activity").val();
             let subject = $("#subject").val();
+            let grade = $("#grade").val();
 
             // disable the submit button
             $("#submit-activity").prop("disabled", true);
@@ -196,7 +219,8 @@ if ($_SERVER['REQUEST_URI'] == '/api/analyze-activity') {
 
                     data: {
                         "activity": activity,
-                        "subject": subject
+                        "subject": subject,
+                        "grade": grade
                     },
                     success: function(response) {
                         displayResults(response);
