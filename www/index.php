@@ -19,6 +19,7 @@ if ($_SERVER['REQUEST_URI'] == '/api/analyze-activity') {
                 // require the SubjectExplorer class
                 require_once '../src/SubjectExplorer.php';
                 require_once '../src/Db.php';
+                //require_once '../src/Ican.php';
 
                 // create a new SubjectExplorer object
                 $subjectExplorer = new SubjectExplorer();
@@ -27,6 +28,13 @@ if ($_SERVER['REQUEST_URI'] == '/api/analyze-activity') {
                 $subjectExplorer->activity = $requestBody['activity'];
                 $subjectExplorer->subject = $requestBody['subject'];
                 $subjectExplorer->grade = $requestBody['grade'];
+
+                
+                /*
+                $Ican = new Ican($requestBody['grade'], $requestBody['subject']);
+                $statements = $Ican->getStatements();
+                $subjectExplorer->statements = $statements;
+                */
 
                 // get the response from OpenAI
                 $response = $subjectExplorer->getResponseFromOpenAi();

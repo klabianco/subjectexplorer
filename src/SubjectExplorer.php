@@ -2,7 +2,7 @@
 
 class SubjectExplorer
 {
-    public $activity = '', $subject = '', $grade = '';
+    public $activity = '', $subject = '', $grade = '', $statements = '';
 
     public function getResponseFromOpenAi()
     {

@@ -10,6 +10,7 @@ class Db
             $this->con = new PDO('mysql:host=' . $_SERVER["DB_HOST"] . ';dbname=' . $_SERVER["DB_NAME"], $_SERVER["DB_USER"], $_SERVER["DB_PW"], array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
         } catch (PDOException $e) {
             print "Sorry, there was a connection error.  Please try again later.";
+            print "Error: " . $e->getMessage();
         }
     }
 
