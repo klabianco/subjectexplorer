@@ -23,6 +23,7 @@ $auth0 = new \Auth0\SDK\Auth0([
 $session = $auth0->getCredentials();
 
 $siteName = "Subject Explorer";
+$pageDescription = '';
 
 // check if the url is "/api/analyze-activity"
 if ($_SERVER['REQUEST_URI'] == '/api/analyze-activity') {
@@ -91,9 +92,16 @@ if ($_SERVER['REQUEST_URI'] == '/api/analyze-activity') {
         'feedback' => $feedback
     ]);
     die;
+} else if ($_SERVER['REQUEST_URI'] == '/privacy-policy') {
+    $mainContent = "privacy-policy";
+    $pageTitle = "Privacy Policy";
+} else if ($_SERVER['REQUEST_URI'] == '/terms-of-service') {
+    $mainContent = "terms-of-service";
+    $pageTitle = "Terms of Service";
 } else if ($_SERVER['REQUEST_URI'] == '/advertise') {
     $mainContent = "advertise";
     $pageTitle = "Advertise With Us";
+    $pageDescription = "Partner with us to share your educational resources, services, and tools with a dedicated community of learners and educators.";
 } else if ($_SERVER['REQUEST_URI'] == "/signin") {
     $auth0->clear();
     header("Location: " . $auth0->login($_SERVER['AUTH0_BASE_URL'] . "/api/login/callback"));
@@ -101,6 +109,7 @@ if ($_SERVER['REQUEST_URI'] == '/api/analyze-activity') {
 } else {
     $mainContent = "homepage";
     $pageTitle = "Discover Your Child's Learning";
+    $pageDescription = "Enter an activity your child did, and our AI will describe how they have learned specific concepts in any given subject.";
 }
 
 require_once '../inc/components/header.php';

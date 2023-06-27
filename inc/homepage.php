@@ -1,10 +1,4 @@
 <main>
-    <section class="jumbotron">
-        <div class="container">
-            <h1 class="display-4">Discover Your Child's Learning</h1>
-            <p class="lead">Enter an activity your child did, and our AI will describe how they have learned specific concepts in any given subject.</p>
-        </div>
-    </section>
     <section class="activity-input">
         <div class="container">
             <form id="activity-form">

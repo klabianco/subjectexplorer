@@ -1,11 +1,4 @@
 <main>
-    <section class="jumbotron">
-        <div class="container">
-            <h1 class="display-4">Advertise With Us</h1>
-            <p class="lead">Partner with us to share your educational resources, services, and tools with a dedicated community of learners and educators.</p>
-        </div>
-    </section>
-
     <section class="container my-5">
         <h2 class="mb-4">Why Advertise With Us?</h2>
         <p>Our platform attracts hundreds of teachers, students, parents, and lifelong learners every day. By advertising with us, your brand will reach a dedicated audience that is passionate about learning.</p>

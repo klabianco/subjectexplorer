@@ -24,6 +24,12 @@
             y.parentNode.insertBefore(t, y);
         })(window, document, "clarity", "script", "hnz5t9hnfz");
     </script>
+    <style>
+        .small-font {
+            font-size: 12px;
+        }
+    </style>
+
 </head>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-N60XK5LN7W"></script>
@@ -72,3 +78,9 @@
                 </div>
         </nav>
     </header>
+    <section class="jumbotron">
+        <div class="container">
+            <h1 class="display-4"><?php echo $pageTitle; ?></h1>
+            <p class="lead"><?php echo $pageDescription; ?></p>
+        </div>
+    </section>
