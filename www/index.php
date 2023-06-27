@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_URI'] == '/api/analyze-activity') {
                 $subjectExplorer->subject = $requestBody['subject'];
                 $subjectExplorer->grade = $requestBody['grade'];
 
-                
+
                 /*
                 $Ican = new Ican($requestBody['grade'], $requestBody['subject']);
                 $statements = $Ican->getStatements();
@@ -66,6 +66,15 @@ if ($_SERVER['REQUEST_URI'] == '/api/analyze-activity') {
         // return an error
         echo json_encode(['error' => 'The request method is not POST.']);
     }
+    die;
+} else if ($_SERVER['REQUEST_URI'] == '/api/feedback') {
+    $feedback = $_POST['feedback'];
+
+    require_once '../src/Db.php';
+    $DB = new Db();
+    $DB->prepExec('INSERT INTO `feedback` (`feedback`,`added_date`) VALUES (:feedback,NOW())', [
+        'feedback' => $feedback
+    ]);
     die;
 }
 ?>
@@ -199,8 +208,25 @@ if ($_SERVER['REQUEST_URI'] == '/api/analyze-activity') {
         </section>
     </main>
     <footer class="mt-5 mb-5">
-        <div class="container">
-            <p class="text-center">&copy; 2023 Subject Explorer. <!--All rights reserved.--></p>
+        <div class="container text-center">
+            <div class="row">
+                <div class="col-12 mb-3">
+                    <button class="btn btn-secondary btn-feedback">Feedback</button>
+
+                    <form id="feedback-form" style="display: none;">
+                        <div class="form-group">
+                            <label for="feedback">Feedback:</label><br>
+                            <textarea class="form-control" id="feedback" name="feedback" placeholder="Your feedback here... You can leave your email address if you want a reply." required></textarea><br>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    &copy; 2023 Subject Explorer. <!--All rights reserved.-->
+                </div>
+            </div>
         </div>
     </footer>
 
@@ -210,6 +236,35 @@ if ($_SERVER['REQUEST_URI'] == '/api/analyze-activity') {
             $("#activity-form").submit(function(event) {
                 event.preventDefault();
                 analyzeActivity();
+            });
+
+            $(".btn-feedback").click(function() {
+                $(this).hide();
+                $("#feedback-form").show();
+            });
+
+            $("#feedback-form").on('submit', function(e) {
+                e.preventDefault(); // Prevent the form from submitting normally
+
+                var feedback = $('#feedback').val();
+
+                $.ajax({
+                    type: "POST",
+                    url: "/api/feedback",
+                    data: {
+                        feedback: feedback
+                    },
+                    success: function(data) {
+                        console.log("Feedback submitted successfully");
+                        // You might want to hide the form and show a thank you message here
+                        $("#feedback-form").hide();
+                        $(".btn-feedback").show().text("Thank you for your feedback!");
+                    },
+                    error: function(data) {
+                        console.log("Error submitting feedback");
+                        // Handle error here
+                    }
+                });
             });
         });
 
