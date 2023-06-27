@@ -4,10 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo $pageTitle;?> - Subject Explorer</title>
+    <title><?php echo $pageTitle; ?> - Subject Explorer</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link rel="apple-touch-icon" sizes="180x180" href="/r/i/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/r/i/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/r/i/favicon-16x16.png">
     <!--script src="subject-explorer.js"></script-->
     <script type="text/javascript">
         (function(c, l, a, r, i, t, y) {
@@ -51,16 +54,21 @@
 <body>
     <header>
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <a href="/" class="navbar-brand">Subject Explorer</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <!--div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
-                    <li class="nav-item"><a href="about.html" class="nav-link">About</a></li>
-                    <li class="nav-item"><a href="resources.html" class="nav-link">Resources</a></li>
-                    <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
-                </ul>
-            </div-->
+            <div class="container">
+                <a class="navbar-brand" href="/"><img src="/r/i/favicon-32x32.png" alt="<?php echo $siteName; ?>" /> <?php echo $siteName; ?> <?php if ($MyUser->isPro()) : ?>Pro<?php endif; ?></a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav">
+                        <?php if ($MyUser->isLoggedIn()) : ?>
+
+                            <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <?php echo $MyUser->getFullName(); ?>
+                            </a>
+
+                        <?php else : ?>
+                            <!--li class="nav-item"><a href="/signin" class="nav-link">Sign In</a></li-->
+                        <?php endif; ?>
+                    </ul>
+                </div>
         </nav>
     </header>

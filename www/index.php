@@ -5,6 +5,25 @@ require __DIR__ . '/../../vendor/autoload.php';
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . "/../..");
 $dotenv->load();
 
+spl_autoload_register(function ($class_name) {
+    include('../src/' . $class_name . '.php');
+});
+
+$Db = new Db();
+$MyUser = new User();
+$MyUser->setDb($Db);
+
+$auth0 = new \Auth0\SDK\Auth0([
+    'domain' => $_SERVER['AUTH0_DOMAIN'],
+    'clientId' => $_SERVER['AUTH0_CLIENT_ID'],
+    'clientSecret' => $_SERVER['AUTH0_CLIENT_SECRET'],
+    'cookieSecret' => $_SERVER['AUTH0_COOKIE_SECRET']
+]);
+
+$session = $auth0->getCredentials();
+
+$siteName = "Subject Explorer";
+
 // check if the url is "/api/analyze-activity"
 if ($_SERVER['REQUEST_URI'] == '/api/analyze-activity') {
     // check if the request method is POST
@@ -17,9 +36,6 @@ if ($_SERVER['REQUEST_URI'] == '/api/analyze-activity') {
             // check if the request body has a activity and subject
             if (isset($requestBody['activity']) && isset($requestBody['subject'])) {
                 // require the SubjectExplorer class
-                require_once '../src/SubjectExplorer.php';
-                require_once '../src/Db.php';
-                //require_once '../src/Ican.php';
 
                 // create a new SubjectExplorer object
                 $subjectExplorer = new SubjectExplorer();
@@ -70,20 +86,23 @@ if ($_SERVER['REQUEST_URI'] == '/api/analyze-activity') {
 } else if ($_SERVER['REQUEST_URI'] == '/api/feedback') {
     $feedback = $_POST['feedback'];
 
-    require_once '../src/Db.php';
     $DB = new Db();
     $DB->prepExec('INSERT INTO `feedback` (`feedback`,`added_date`) VALUES (:feedback,NOW())', [
         'feedback' => $feedback
     ]);
     die;
-} else if($_SERVER['REQUEST_URI'] == '/advertise'){
+} else if ($_SERVER['REQUEST_URI'] == '/advertise') {
     $mainContent = "advertise";
     $pageTitle = "Advertise With Us";
+} else if ($_SERVER['REQUEST_URI'] == "/signin") {
+    $auth0->clear();
+    header("Location: " . $auth0->login($_SERVER['AUTH0_BASE_URL'] . "/api/login/callback"));
+    exit;
 } else {
     $mainContent = "homepage";
     $pageTitle = "Discover Your Child's Learning";
 }
 
 require_once '../inc/components/header.php';
-require_once '../inc/'.$mainContent.'.php';
+require_once '../inc/' . $mainContent . '.php';
 require_once '../inc/components/footer.php';
