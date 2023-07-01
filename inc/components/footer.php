@@ -2,7 +2,7 @@
     <div class="container text-center mt-3">
         <div class="row mb-3">
             <div class="col-12">
-                <a href="/advertise">Advertise</a> |
+                <a href="/advertise">Advertise With Us</a> |
                 <a href="/terms-of-service">Terms Of Service</a> |
                 <a href="/privacy-policy">Privacy Policy</a>
             </div>
