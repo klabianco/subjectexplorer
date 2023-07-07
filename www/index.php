@@ -22,67 +22,22 @@ $auth0 = new \Auth0\SDK\Auth0([
 
 $session = $auth0->getCredentials();
 
+if ($session !== null) {
+    $MyUser->setAndLoadByEmail($session->user['email'], $session->user['given_name'], $session->user['family_name']);
+}
+
 $siteName = "Subject Explorer";
 $pageDescription = '';
 
+$requestPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+$pathParts = explode('/', $requestPath);
+
 // check if the url is "/api/analyze-activity"
 if ($_SERVER['REQUEST_URI'] == '/api/analyze-activity') {
-    // check if the request method is POST
-    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-        // check if the request body is not empty
-        if (!empty(file_get_contents('php://input'))) {
-            // get the request body
-            $requestBody = $_POST;
-
-            // check if the request body has a activity and subject
-            if (isset($requestBody['activity']) && isset($requestBody['subject'])) {
-                // require the SubjectExplorer class
-
-                // create a new SubjectExplorer object
-                $subjectExplorer = new SubjectExplorer();
-
-                // set the activity and subject
-                $subjectExplorer->activity = $requestBody['activity'];
-                $subjectExplorer->subject = $requestBody['subject'];
-                $subjectExplorer->grade = $requestBody['grade'];
-
-
-                /*
-                $Ican = new Ican($requestBody['grade'], $requestBody['subject']);
-                $statements = $Ican->getStatements();
-                $subjectExplorer->statements = $statements;
-                */
-
-                // get the response from OpenAI
-                $response = $subjectExplorer->getResponseFromOpenAi();
-
-                // check if the response is not empty
-                if ($response != '') {
-                    // return the response
-                    echo json_encode(['response' => $response]);
-                    $DB = new Db();
-                    $DB->prepExec('INSERT INTO `activities` (`activity`, `subject`, `grade`, `response`,`added_date`) VALUES (:activity, :subject, :grade, :response,NOW())', [
-                        'activity' => $requestBody['activity'],
-                        'subject' => $requestBody['subject'],
-                        'grade' => $requestBody['grade'],
-                        'response' => $response
-                    ]);
-                } else {
-                    // return an error
-                    echo json_encode(['error' => 'There was an error analyzing the activity.']);
-                }
-            } else {
-                // return an error
-                echo json_encode(['error' => 'The request body is missing a description or subject.']);
-            }
-        } else {
-            // return an error
-            echo json_encode(['error' => 'The request body is empty.']);
-        }
-    } else {
-        // return an error
-        echo json_encode(['error' => 'The request method is not POST.']);
-    }
+    require_once __DIR__ . '/../api/analyze-activity.php';
+    die;
+} else if ($_SERVER['REQUEST_URI'] == '/api/get-activities') {
+    require_once __DIR__ . '/../api/get-activities.php';
     die;
 } else if ($_SERVER['REQUEST_URI'] == '/api/feedback') {
     $feedback = $_POST['feedback'];
@@ -102,14 +57,50 @@ if ($_SERVER['REQUEST_URI'] == '/api/analyze-activity') {
     $mainContent = "advertise";
     $pageTitle = "Advertise With Us";
     $pageDescription = "Partner with us to share your educational resources, services, and tools with a dedicated community of learners and educators.";
+} else if ($_SERVER['REQUEST_URI'] == '/signout') {
+    header("Location: " . $auth0->logout($_SERVER['AUTH0_BASE_URL'] . "/"));
 } else if ($_SERVER['REQUEST_URI'] == "/signin") {
     $auth0->clear();
+    if (isset($_SERVER['HTTP_REFERER'])) {
+        $previous_url = $_SERVER['HTTP_REFERER'];
+        setcookie("previous_url", $previous_url, time() + (86400 * 30), "/");
+    }
     header("Location: " . $auth0->login($_SERVER['AUTH0_BASE_URL'] . "/api/login/callback"));
     exit;
+} else if (str_starts_with($requestPath, "/api/login/callback")) {
+    $auth0->exchange($_SERVER['AUTH0_BASE_URL'] . "/api/login/callback");
+    if (isset($_COOKIE["previous_url"])) {
+        // get the cookie to a local var
+        $previous_url = $_COOKIE["previous_url"];
+        // delete the cookie
+        setcookie("previous_url", "", time() - 3600, "/");
+        // redirect to the cookie value
+        header("Location: " . $previous_url);
+    } else {
+        header("Location: /");
+    }
+} else if ($pathParts[1] == "activity") {
+    $activityId = $pathParts[2];
+    $Activity = new Activity();
+    $Activity->setId($activityId);
+    $Activity->dbLoadById();
+
+    if ($Activity->hasId()) {
+        $mainContent = "activity";
+
+        $pageTitle = $Activity->getActivity();
+    } else {
+        header("Location: /");
+    }
 } else {
-    $mainContent = "homepage";
-    $pageTitle = "Discover Your Child's Learning";
-    $pageDescription = "Enter an activity your child did, and our AI will describe how they have learned specific concepts in any given subject.";
+    if ($MyUser->isLoggedIn()) {
+        $mainContent = "dashboard";
+        $pageTitle = "Dashboard";
+    } else {
+        $mainContent = "homepage";
+        $pageTitle = "Discover Your Child's Learning";
+        $pageDescription = "Enter an activity your child did, and our AI will describe how they have learned specific concepts in any given subject.";
+    }
 }
 
 require_once '../inc/components/header.php';

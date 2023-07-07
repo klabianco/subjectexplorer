@@ -16,4 +16,11 @@ trait IdAddedDate{
     public function getAddedDate(){
         return $this->_addedDate;
     }
+
+    // nicely formatted date function
+
+    public function getFormattedAddedDate(){
+        $date = new DateTime($this->getAddedDate());
+        return $date->format('F j, Y');
+    }
 }

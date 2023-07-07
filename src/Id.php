@@ -10,4 +10,9 @@ trait Id{
     public function getId(){
         return $this->_id;
     }
+
+    public function hasId(){
+        if($this->getId() == '') return false;
+        return true;
+    }
 }

@@ -29,13 +29,7 @@
 </footer>
 
 <script>
-    // Handle form submission
     $(document).ready(function() {
-        $("#activity-form").submit(function(event) {
-            event.preventDefault();
-            analyzeActivity();
-        });
-
         $(".btn-feedback").click(function() {
             $(this).hide();
             $("#feedback-form").show();
@@ -65,67 +59,6 @@
             });
         });
     });
-
-    function analyzeActivity() {
-        let activity = $("#activity").val();
-        let subject = $("#subject").val();
-        let grade = $("#grade").val();
-
-        // disable the submit button
-        $("#submit-activity").prop("disabled", true);
-
-        // remove the contents of the results div
-        $("#results").empty();
-
-        // show the hidden waiting message
-        $("#waiting").show();
-
-        if (activity && subject) {
-            $.post({
-                url: "/api/analyze-activity",
-
-                data: {
-                    "activity": activity,
-                    "subject": subject,
-                    "grade": grade
-                },
-                success: function(response) {
-                    displayResults(response);
-                    // enable the submit button
-                    $("#submit-activity").prop("disabled", false);
-                    // hide the waiting message
-                    $("#waiting").hide();
-                },
-                error: function(xhr, status, error) {
-                    console.error("Error: " + status + " " + error);
-                    // enable the submit button
-                    $("#submit-activity").prop("disabled", false);
-                    // hide the waiting message
-                    $("#waiting").hide();
-                }
-            });
-        } else {
-            alert("Please enter an activity!");
-        }
-    }
-
-    function displayResults(data) {
-        let resultsDiv = $("#results");
-        resultsDiv.empty();
-        // convert json response to an object
-        result = JSON.parse(data);
-        console.log('result', result);
-
-
-        let resultHTML = `<div class="result card mb-3">
-                    <div class="card-body">
-                        <h3 class="card-title">Your Results</h3>
-                        <p class="card-text">${result.response}</p>
-                    </div>
-                </div>`;
-
-        resultsDiv.append(resultHTML);
-    }
 </script>
 </body>
 
