@@ -79,6 +79,8 @@ if ($_SERVER['REQUEST_URI'] == '/api/analyze-activity') {
         $Activity->setId($resultId);
         $Activity->setUserId($MyUser->getId());
         $Activity->dbUpdateUserId();
+
+        setcookie('resultId', '', time() - 3600);
     } 
 
     if (isset($_COOKIE["previous_url"])) {
