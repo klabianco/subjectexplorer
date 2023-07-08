@@ -78,6 +78,8 @@ class Activity{
         ];
 
         $Db->prepExec($q, $d);
+
+        $this->setId($Db->getLastInsertId());
     }
 
     public function dbLoadById(){
@@ -100,5 +102,17 @@ class Activity{
         } else {
             $this->setId('');
         }
+    }
+
+    public function dbUpdateUserId(){
+        global $Db;
+
+        $q = "UPDATE `activities` SET `user_id` = :user_id WHERE `id` = :id";
+        $d = [
+            ':user_id' => $this->getUserId(),
+            ':id' => $this->getId()
+        ];
+
+        $Db->prepExec($q, $d);
     }
 }

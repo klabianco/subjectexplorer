@@ -78,7 +78,7 @@
                     // hide the waiting message
                     $("#waiting").hide();
 
-                    if(userAuthToken != '') getActivities();
+                    if (userAuthToken != '') getActivities();
                 },
                 error: function(xhr, status, error) {
                     console.error("Error: " + status + " " + error);
@@ -97,16 +97,23 @@
         let resultsDiv = $("#results");
         resultsDiv.empty();
         // convert json response to an object
-        result = JSON.parse(data);
-        console.log('result', result);
+        let result = JSON.parse(data);
 
+        var analysisButton = '<a href="/signin" class="btn btn-primary w-100">Sign In To Save Searches</a>';
+
+        if (userAuthToken != ''){
+            analysisButton = '';
+        } else {
+            document.cookie = `resultId=${result.id}; path=/;`;
+        }
 
         let resultHTML = `<div class="result card mb-3">
-                    <div class="card-body">
-                        <h3 class="card-title">Your Results</h3>
-                        <p class="card-text">${result.response}</p>
-                    </div>
-                </div>`;
+    <div class="card-body">
+        <h3 class="card-title">Your Results</h3>
+        <p class="card-text">${result.response}</p>
+        ${analysisButton}
+    </div>
+</div>`;
 
         resultsDiv.append(resultHTML);
     }

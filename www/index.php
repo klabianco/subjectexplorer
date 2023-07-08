@@ -69,6 +69,18 @@ if ($_SERVER['REQUEST_URI'] == '/api/analyze-activity') {
     exit;
 } else if (str_starts_with($requestPath, "/api/login/callback")) {
     $auth0->exchange($_SERVER['AUTH0_BASE_URL'] . "/api/login/callback");
+
+    $session = $auth0->getCredentials();
+    $MyUser->setAndLoadByEmail($session->user['email'], $session->user['given_name'], $session->user['family_name']);
+    
+    if (isset($_COOKIE['resultId'])) {
+        $resultId = $_COOKIE['resultId'];
+        $Activity = new Activity();
+        $Activity->setId($resultId);
+        $Activity->setUserId($MyUser->getId());
+        $Activity->dbUpdateUserId();
+    } 
+
     if (isset($_COOKIE["previous_url"])) {
         // get the cookie to a local var
         $previous_url = $_COOKIE["previous_url"];

@@ -43,8 +43,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 }
 
                 $Activity->dbInsert();
+                $id = $Activity->getId();
 
-                echo json_encode(['response' => $response]);
+                echo json_encode(['response' => $response,'id' => $id]);
             } else {
                 // return an error
                 echo json_encode(['error' => 'There was an error analyzing the activity.']);
