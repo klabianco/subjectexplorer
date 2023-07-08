@@ -1,7 +1,7 @@
 <div class="container">
     <div class="row">
         <div class="col mt-3">
-            <p>Updated July 27, 2023</p>
+            <p>Updated July 8, 2023</p>
 
             <p>These terms of service ("Agreement") govern your use of our website, products, and services. By using our website, products, or services, you agree to be bound by this Agreement.</p>
             <h2>Use of Our Website, Products, and Services</h2>
