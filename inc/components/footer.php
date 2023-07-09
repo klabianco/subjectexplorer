@@ -60,6 +60,9 @@
         });
     });
 </script>
+<?php foreach($jsInclude as $include):?>
+    <script async src="<?php echo $include;?>"></script>
+<?php endforeach;?>
 </body>
 
 </html>

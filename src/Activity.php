@@ -5,6 +5,14 @@ class Activity{
 
     private $_activity, $_subject, $_grade, $_response;
 
+    public function __construct($id = null)
+    {
+        if($id != null){
+            $this->setId($id);
+            $this->dbLoadById();
+        }
+    }
+
     public function getActivity()
     {
         return $this->_activity;
@@ -110,6 +118,17 @@ class Activity{
         $q = "UPDATE `activities` SET `user_id` = :user_id WHERE `id` = :id";
         $d = [
             ':user_id' => $this->getUserId(),
+            ':id' => $this->getId()
+        ];
+
+        $Db->prepExec($q, $d);
+    }
+
+    public function dbRemoveUserId(){
+        global $Db;
+
+        $q = "UPDATE `activities` SET `user_id` = NULL WHERE `id` = :id";
+        $d = [
             ':id' => $this->getId()
         ];
 

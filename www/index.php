@@ -21,6 +21,7 @@ $auth0 = new \Auth0\SDK\Auth0([
 ]);
 
 $session = $auth0->getCredentials();
+$jsInclude = [];
 
 if ($session !== null) {
     $MyUser->setAndLoadByEmail($session->user['email'], $session->user['given_name'], $session->user['family_name']);
@@ -38,6 +39,9 @@ if ($_SERVER['REQUEST_URI'] == '/api/analyze-activity') {
     die;
 } else if ($_SERVER['REQUEST_URI'] == '/api/get-activities') {
     require_once __DIR__ . '/../api/get-activities.php';
+    die;
+} else if($_SERVER['REQUEST_URI'] == "/api/delete-activity"){
+    require_once __DIR__ . '/../api/delete-activity.php';
     die;
 } else if ($_SERVER['REQUEST_URI'] == '/api/feedback') {
     $feedback = $_POST['feedback'];
