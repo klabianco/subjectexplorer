@@ -28,6 +28,14 @@ class Activity{
         return $this->_subject;
     }
 
+    public function getSubjectString(){
+        $subjectString = '';
+        foreach($this->getSubject() as $subject){
+            $subjectString .= $subject.', ';
+        }
+        return rtrim($subjectString, ', ');
+    }
+
     public function setSubject($subject)
     {
         $this->_subject = $subject;
@@ -79,7 +87,7 @@ class Activity{
         $q = "INSERT INTO `activities` (`activity`, `subject`, `grade`, `response`,`added_date`, `user_id`) VALUES (:activity, :subject, :grade, :response,NOW(), :user_id)";
         $d = [
             ':activity' => $this->getActivity(),
-            ':subject' => $this->getSubject(),
+            ':subject' => $this->getSubjectString(),
             ':grade' => $this->getGrade(),
             ':response' => $this->getResponse(),
             ':user_id' => $this->getUserId()
@@ -133,5 +141,24 @@ class Activity{
         ];
 
         $Db->prepExec($q, $d);
+    }
+
+    public function getAndSetResponseFromOpenAi()
+    {
+        if ($this->getActivity() != '' && $this->getSubjectString() != '') {
+            $grade = '';
+            if($this->getGrade() != '') $grade = $this->getGrade().'-grade';
+
+            $prompt = 'Activity: "' . $this->getActivity() . '”
+        
+Only write bullet points of how the '.$grade.' child has learned specific concepts from the activity for the subject of ' . $this->getSubjectString() . '. Do not assume the child used any materials beyond those mentioned in the description. Output in html starting with <ul>. Include a <p> short paragraph for tips on creative ways for continued development related to the activity.';
+
+            $AI = new AI();
+            $AI->setPrompt($prompt);
+
+            $response = $AI->getResponseFromOpenAi();
+
+            $this->setResponse($response);
+        }
     }
 }

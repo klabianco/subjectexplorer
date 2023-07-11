@@ -1,5 +1,5 @@
 <?php 
-$jsInclude[] = "/r/js/dashboard.min.js";
+$jsInclude[] = "/r/js/dashboard.min.js?".date("YmdHis", filemtime($_SERVER['DOCUMENT_ROOT']."/r/js/dashboard.min.js"));
 ?>
 <script>
     var userAuthToken = "<?php echo $MyUser->getAuthToken(); ?>";

@@ -1,3 +1,19 @@
+<?php
+$subjects = [
+    'Art',
+    'English Language Arts',
+    'Foreign Language',
+    'History',
+    'Math',
+    'Music',
+    'Physical Education',
+    'Science',
+    'Social Studies'
+];
+
+sort($subjects);
+?>
+
 <form id="activity-form">
     <label for="activity">Activity:</label>
     <input type="text" id="activity" name="activity" class="form-control mb-2 mr-sm-2" placeholder="E.g., 'My child built a LEGO tower' (More detailed = better analysis)" required>
@@ -21,19 +37,31 @@
         <option value="Eleventh">11th Grade</option>
         <option value="Twelfth">12th Grade</option>
     </select>
-    <label for="activity">Subject:</label>
-    <select class="form-control mb-2 mr-sm-2" id="subject" name="subject">
-        <option value="English Language Arts">English Language Arts</option>
-        <option value="Math">Math</option>
-        <option value="Science">Science</option>
-        <option value="Social Studies">Social Studies</option>
-        <option value="History">History</option>
-        <option value="Art">Art</option>
-        <option value="Music">Music</option>
-        <option value="Foreign Language">Foreign Language</option>
-        <option value="Physical Education">Physical Education</option>
-    </select>
-    <button type="submit" id="submit-activity" class="btn btn-primary mb-2">Analyze Activity</button>
+
+    <h6 class="my-4">Select Subject(s)</h6>
+    <div class="row">
+        <?php
+        $columns = array_chunk($subjects, ceil(count($subjects) / 3));
+        foreach ($columns as $column) {
+            echo '<div class="col-md-4">';
+            foreach ($column as $subject) {
+                echo '
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" value="' . $subject . '" id="' . str_replace(' ', '', $subject) . '">
+          <label class="form-check-label" for="' . str_replace(' ', '', $subject) . '">
+            ' . $subject . '
+          </label>
+        </div>
+      ';
+            }
+            echo '</div>';
+        }
+        ?>
+    </div>
+
+
+
+    <button type="submit" id="submit-activity" class="btn btn-primary mb-2 mt-3">Analyze Activity</button>
 </form>
 
 <div class="activity-results">
@@ -47,10 +75,26 @@
     <div id="results"></div>
 </div>
 <script>
+    function getSelectedSubjects() {
+        const selectedSubjects = [];
+        const checkedBoxes = document.querySelectorAll('input[type=checkbox]:checked');
+
+        checkedBoxes.forEach((checkbox) => {
+            selectedSubjects.push(checkbox.value);
+        });
+
+        return selectedSubjects;
+    }
+
     function analyzeActivity() {
         let activity = $("#activity").val();
-        let subject = $("#subject").val();
+        let subjects = getSelectedSubjects();
         let grade = $("#grade").val();
+
+        if(subjects.length == 0) {
+            alert("Please select at least one subject!");
+            return;
+        }
 
         // disable the submit button
         $("#submit-activity").prop("disabled", true);
@@ -61,13 +105,16 @@
         // show the hidden waiting message
         $("#waiting").show();
 
-        if (activity && subject) {
+        console.log('selected subjects: ', subjects);
+
+        if (activity && subjects.length > 0) {
+            
             $.post({
                 url: "/api/analyze-activity",
 
                 data: {
                     "activity": activity,
-                    "subject": subject,
+                    "subjects": subjects,
                     "grade": grade,
                     "userAuthToken": userAuthToken
                 },
@@ -101,7 +148,7 @@
 
         var analysisButton = '<a href="/signin" class="btn btn-primary w-100">Sign In To Save Analysis</a>';
 
-        if (userAuthToken != ''){
+        if (userAuthToken != '') {
             analysisButton = '';
         } else {
             document.cookie = `resultId=${result.id}; path=/;`;

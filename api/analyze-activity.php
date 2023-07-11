@@ -6,50 +6,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (!empty(file_get_contents('php://input'))) {
         // get the request body
         $requestBody = $_POST;
+        $subjects = $requestBody['subjects'];
+        $subjectsCount = count($subjects);
 
         // check if the request body has a activity and subject
-        if (isset($requestBody['activity']) && isset($requestBody['subject'])) {
-            // require the SubjectExplorer class
+        if (isset($requestBody['activity']) && $subjectsCount > 0) {
+            $Activity = new Activity();
+            $Activity->setActivity($requestBody['activity']);
+            $Activity->setSubject($subjects);
+            $Activity->setGrade($requestBody['grade']);
+            $Activity->getAndSetResponseFromOpenAi();
 
-            // create a new SubjectExplorer object
-            $subjectExplorer = new SubjectExplorer();
+            $U = new User();
 
-            // set the activity and subject
-            $subjectExplorer->activity = $requestBody['activity'];
-            $subjectExplorer->subject = $requestBody['subject'];
-            $subjectExplorer->grade = $requestBody['grade'];
+            if ($_POST['userAuthToken'] != "") {
+                $U->setDb($Db);
+                $U->setAuthToken($_POST['userAuthToken']);
+                $U->loadByAuthToken();
 
-            // get the response from OpenAI
-            $response = $subjectExplorer->getResponseFromOpenAi();
-
-            // check if the response is not empty
-            if ($response != '') {
-                // return the response
-
-                $Activity = new Activity();
-                $Activity->setActivity($requestBody['activity']);
-                $Activity->setSubject($requestBody['subject']);
-                $Activity->setGrade($requestBody['grade']);
-                $Activity->setResponse($response);
-
-                $U = new User();
-
-                if ($_POST['userAuthToken'] != "") {
-                    $U->setDb($Db);
-                    $U->setAuthToken($_POST['userAuthToken']);
-                    $U->loadByAuthToken();
-
-                    if ($U->getId() != null)  $Activity->setUserId($U->getId());
-                }
-
-                $Activity->dbInsert();
-                $id = $Activity->getId();
-
-                echo json_encode(['response' => $response,'id' => $id]);
-            } else {
-                // return an error
-                echo json_encode(['error' => 'There was an error analyzing the activity.']);
+                if ($U->getId() != null)  $Activity->setUserId($U->getId());
             }
+
+            $Activity->dbInsert();
+            $id = $Activity->getId();
+            $response = $Activity->getResponse();
+
+            echo json_encode(['response' => $response, 'id' => $id]);
         } else {
             // return an error
             echo json_encode(['error' => 'The request body is missing a description or subject.']);

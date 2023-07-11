@@ -21,7 +21,7 @@ function displayActivities(response) {
   if (activities.length != 0) {
     // loop through the activities and build the html
     html =
-      "<table class='table table-striped'><thead><tr><th>Activity</th><th>Subject</th><th>Actions</th></tr></thead><tbody>";
+      "<table class='table table-striped'><thead><tr><th>Activity</th><th>Subject(s)</th><th>Actions</th></tr></thead><tbody>";
     for (let i = 0; i < activities.length; i++) {
       // format the date nicely
       let formatAdded = new Date(activities[i].added_date).toLocaleDateString();
