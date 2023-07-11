@@ -47,7 +47,6 @@
                     feedback: feedback
                 },
                 success: function(data) {
-                    console.log("Feedback submitted successfully");
                     // You might want to hide the form and show a thank you message here
                     $("#feedback-form").hide();
                     $(".btn-feedback").show().text("Thank you for your feedback!");

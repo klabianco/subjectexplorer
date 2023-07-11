@@ -105,8 +105,6 @@ sort($subjects);
         // show the hidden waiting message
         $("#waiting").show();
 
-        console.log('selected subjects: ', subjects);
-
         if (activity && subjects.length > 0) {
             
             $.post({
