@@ -43,6 +43,10 @@ if ($_SERVER['REQUEST_URI'] == '/api/analyze-activity') {
 } else if($_SERVER['REQUEST_URI'] == "/api/delete-activity"){
     require_once __DIR__ . '/../api/delete-activity.php';
     die;
+} else if($_SERVER['REQUEST_URI'] == "/robots.txt"){
+    echo 'User-agent: *' . "\n";
+    echo 'Disallow:';
+    die;
 } else if ($_SERVER['REQUEST_URI'] == '/api/feedback') {
     $feedback = $_POST['feedback'];
 
