@@ -144,7 +144,7 @@ sort($subjects);
         // convert json response to an object
         let result = JSON.parse(data);
 
-        var analysisButton = '<a href="/signin" class="btn btn-primary w-100">Sign In To Save Analysis</a>';
+        var analysisButton = '<a href="/signin" class="btn btn-primary w-100">Sign In To Save Your Analysis</a>';
 
         if (userAuthToken != '') {
             analysisButton = '';

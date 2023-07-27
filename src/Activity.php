@@ -168,15 +168,16 @@ Output Format:
 ```
 [Subject Name]
 <ul>
-<li>[what the child learned]</li>
-<li>[what the child learned]</li>
-<li>[what the child learned]</li>
+<li>[What the child learned]</li>
+<li>[What the child learned]</li>
+<li>[What the child learned]</li>
 </ul>
 <p>[tips go here]</p>
 [Book Recommendations]
 <ul id="books">
 <li><b>[Book Title]</b> by [Author]: [Short Description]</li>
-</ul>';
+</ul>
+```';
 
             $AI = new AI();
             $AI->setPrompt($prompt);
