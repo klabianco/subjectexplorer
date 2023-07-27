@@ -1,13 +1,14 @@
 <?php
 
-class Activity{
+class Activity
+{
     use IdAddedDate, UserId;
 
     private $_activity, $_subject, $_grade, $_response;
 
     public function __construct($id = null)
     {
-        if($id != null){
+        if ($id != null) {
             $this->setId($id);
             $this->dbLoadById();
         }
@@ -28,10 +29,11 @@ class Activity{
         return $this->_subject;
     }
 
-    public function getSubjectString(){
+    public function getSubjectString()
+    {
         $subjectString = '';
-        foreach($this->getSubject() as $subject){
-            $subjectString .= $subject.', ';
+        foreach ($this->getSubject() as $subject) {
+            $subjectString .= $subject . ', ';
         }
         return rtrim($subjectString, ', ');
     }
@@ -62,26 +64,30 @@ class Activity{
     }
 
     // has grade
-    public function hasGrade(){
-        if($this->getGrade() == '') return false;
+    public function hasGrade()
+    {
+        if ($this->getGrade() == '') return false;
         return true;
     }
 
     // has response
 
-    public function hasResponse(){
-        if($this->getResponse() == '') return false;
+    public function hasResponse()
+    {
+        if ($this->getResponse() == '') return false;
         return true;
     }
 
     // has subject
 
-    public function hasSubject(){
-        if($this->getSubject() == '') return false;
+    public function hasSubject()
+    {
+        if ($this->getSubject() == '') return false;
         return true;
     }
 
-    public function dbInsert(){
+    public function dbInsert()
+    {
         global $Db;
 
         $q = "INSERT INTO `activities` (`activity`, `subject`, `grade`, `response`,`added_date`, `user_id`) VALUES (:activity, :subject, :grade, :response,NOW(), :user_id)";
@@ -98,7 +104,8 @@ class Activity{
         $this->setId($Db->getLastInsertId());
     }
 
-    public function dbLoadById(){
+    public function dbLoadById()
+    {
         global $Db;
 
         $q = "SELECT * FROM `activities` WHERE `id` = :id";
@@ -108,7 +115,7 @@ class Activity{
 
         $activity = $Db->prepExecFetchAll($q, $d);
 
-        if(count($activity) > 0){
+        if (count($activity) > 0) {
             $this->setActivity($activity[0]['activity']);
             $this->setSubject($activity[0]['subject']);
             $this->setGrade($activity[0]['grade']);
@@ -120,7 +127,8 @@ class Activity{
         }
     }
 
-    public function dbUpdateUserId(){
+    public function dbUpdateUserId()
+    {
         global $Db;
 
         $q = "UPDATE `activities` SET `user_id` = :user_id WHERE `id` = :id";
@@ -132,7 +140,8 @@ class Activity{
         $Db->prepExec($q, $d);
     }
 
-    public function dbRemoveUserId(){
+    public function dbRemoveUserId()
+    {
         global $Db;
 
         $q = "UPDATE `activities` SET `user_id` = NULL WHERE `id` = :id";
@@ -147,16 +156,70 @@ class Activity{
     {
         if ($this->getActivity() != '' && $this->getSubjectString() != '') {
             $grade = '';
-            if($this->getGrade() != '') $grade = $this->getGrade().'-grade';
+            if ($this->getGrade() != '') $grade = $this->getGrade() . '-grade';
 
             $prompt = 'Activity: "' . $this->getActivity() . '”
         
-Only write bullet points of how the '.$grade.' child has learned specific concepts from the activity for the subject of ' . $this->getSubjectString() . '. Do not assume the child used any materials beyond those mentioned in the description. Output in html starting with <ul>. Include a <p> short paragraph for tips on creative ways for continued development related to the activity.';
+Start by writing bullet points of how the ' . $grade . ' child has learned specific concepts from the activity for the subject of ' . $this->getSubjectString() . '. Do not assume the child used any materials beyond those mentioned in the description. Do not write the activity in in the output.
+Then add a paragraph <p> with tips on creative ways for continued development related to the activity.
+Then add 3 grade-appropriate Book Recommendatons.
+
+Output Format:
+```
+[Subject Name]
+<ul>
+<li>[what the child learned]</li>
+<li>[what the child learned]</li>
+<li>[what the child learned]</li>
+</ul>
+<p>[tips go here]</p>
+[Book Recommendations]
+<ul id="books">
+<li><b>[Book Title]</b> by [Author]: [Short Description]</li>
+</ul>';
 
             $AI = new AI();
             $AI->setPrompt($prompt);
 
-            $response = $AI->getResponseFromOpenAi();
+            $response = $AI->getResponseFromOpenAi("You are a helpful teacher. Output in HTML format.",0.8);
+
+            $doc = new DOMDocument();
+            $doc->loadHTML($response, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+
+            $xpath = new DOMXPath($doc);
+
+            // Find all <b> tags within a <li> within an <ul> with id 'books'
+            $query = '//ul[@id="books"]/li/b';
+
+            $elements = $xpath->query($query);
+
+            foreach ($elements as $element) {
+                $text = $element->nodeValue;
+
+                // Create the new <a> element
+                $a = $doc->createElement('a', $text);
+
+                // Set the href attribute
+                /*
+                <a target="_blank" href="https://www.amazon.com/gp/search?ie=UTF8&tag=kevinl8888-20&linkCode=ur2&linkId=2fa44c89b3daf562c349b7ad4db64bd4&camp=1789&creative=9325&index=books&keywords=this is some text">book</a>
+                */
+                $a->setAttribute('href', 'https://www.amazon.com/gp/search?ie=UTF8&tag=kevinl8888-20&linkCode=ur2&linkId=2fa44c89b3daf562c349b7ad4db64bd4&camp=1789&creative=9325&index=books&keywords=' . urlencode($text));
+                $a->setAttribute('target', '_blank');
+
+                // Replace the <b> element with the new <a> element
+                $element->parentNode->replaceChild($a, $element);
+            }
+
+            // if there were elements found, add a small disclaimer
+            if ($elements->length > 0) {
+                $disclaimer = $doc->createElement('p', 'If you click on these links and make a purchase, we may receive a small commission.');
+                $disclaimer->setAttribute('style', 'font-size: 0.8rem;');
+
+                $doc->appendChild($disclaimer);
+            }
+
+            // Save the modified HTML back to the response variable
+            $response = $doc->saveHTML();
 
             $this->setResponse($response);
         }
