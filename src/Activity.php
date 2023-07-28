@@ -168,9 +168,7 @@ Output Format:
 ```
 [Subject Name]
 <ul>
-<li>[What the child learned]</li>
-<li>[What the child learned]</li>
-<li>[What the child learned]</li>
+<li>[Analysis]</li>
 </ul>
 <p>[tips go here]</p>
 [Book Recommendations]
