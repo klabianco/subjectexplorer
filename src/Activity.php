@@ -162,7 +162,7 @@ class Activity
         
 Start by writing bullet points of how the ' . $grade . ' child has learned specific concepts from the activity for the subject of ' . $this->getSubjectString() . '. Do not assume the child used any materials beyond those mentioned in the description. Do not write the activity in in the output.
 Then add a paragraph <p> with tips on creative ways for continued development related to the activity.
-Then add 3 grade-appropriate Book Recommendatons.
+Then add 3  '.$grade.' reading level Book Recommendatons related to the activity.
 
 Output Format:
 ```
