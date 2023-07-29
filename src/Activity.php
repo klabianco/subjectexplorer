@@ -158,15 +158,13 @@ class Activity
             $grade = '';
             if ($this->getGrade() != '') $grade = $this->getGrade() . '-grade';
 
-            $prompt = 'Activity: "' . $this->getActivity() . '”
-        
-Start by writing bullet points of how the ' . $grade . ' child has learned specific concepts from the activity for the subject of ' . $this->getSubjectString() . '. Do not assume the child used any materials beyond those mentioned in the description. Do not write the activity in in the output.
+            $prompt = 'Start by writing bullet points of how the ' . $grade . ' child has learned specific concepts from the activity of "' . $this->getActivity() . '” for the subject(s) of ' . $this->getSubjectString() . '. Do not assume the child used any materials beyond those mentioned in the description.
 Then add a paragraph <p> with tips on creative ways for continued development related to the activity.
 Then add 3  '.$grade.' reading level Book Recommendatons related to the activity.
 
-Output Format:
+HTML Format/Example:
 ```
-[Subject Name]
+<h4>[Subject Name]</h4>
 <ul>
 <li>[Analysis]</li>
 </ul>
@@ -175,15 +173,20 @@ Output Format:
 <ul id="books">
 <li><b>[Book Title]</b> by [Author]: [Short Description]</li>
 </ul>
-```';
+
+Start HTML output with <div>';
 
             $AI = new AI();
             $AI->setPrompt($prompt);
 
-            $response = $AI->getResponseFromOpenAi("You are a helpful teacher. Output in HTML format.",0.8);
+            $response = $AI->getResponseFromOpenAi("You are a helpful teacher. Output in HTML",0.8);
 
             $doc = new DOMDocument();
             $doc->loadHTML($response, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+            libxml_use_internal_errors(true);  // suppress HTML5 errors
+            libxml_clear_errors();  // clear errors for HTML5
+            $cleanHTML = $doc->saveHTML();
+            $doc->loadHTML($cleanHTML, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
 
             $xpath = new DOMXPath($doc);
 
