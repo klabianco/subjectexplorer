@@ -158,28 +158,31 @@ class Activity
             $grade = '';
             if ($this->getGrade() != '') $grade = $this->getGrade() . '-grade';
 
-            $prompt = 'Start by writing bullet points of how the ' . $grade . ' child has learned specific concepts from the activity of "' . $this->getActivity() . '” for the subject(s) of ' . $this->getSubjectString() . ': : 4 or 5 points per subject. Do not assume the child used any materials beyond those mentioned in the description.
-2. Then add a descriptive paragraph <p> with tips on creative ways for continued development related to the activity.
-Then add 3  '.$grade.' reading level Book Recommendatons related to the activity.
+            $prompt = 'Activity: "' . $this->getActivity() . '”
+
+Start by writing bullet points of how the ' . $grade . ' child has learned specific concepts from the activity for the subject(s) of ' . $this->getSubjectString() . ': 3 to 4 bullet points per subject. Do not assume the child used any materials beyond those mentioned in the description.
+Then add a descriptive paragraph <p> with tips on creative ways for continued development related to the activity.
+Finally add a "Book Recommendatons" section with 3  '.$grade.' reading level books related to '.$this->getActivity().' and the subjects.
 
 HTML Format/Example:
-```
+(Repeat)
 <h4>[Subject Name]</h4>
 <ul>
 <li>[Analysis]</li>
 </ul>
+(End Repeat)
 <p>[Insert tips paragraph (From step 2)]</p>
-[Book Recommendations]
+<h4>Book Recommendations</h4>
 <ul id="books">
 <li><b>[Book Title]</b> by [Author]: [Short Description]</li>
 </ul>
 
-Start HTML output with <div>';
+Start full HTML output with <div>';
 
             $AI = new AI();
             $AI->setPrompt($prompt);
 
-            $response = $AI->getResponseFromOpenAi("You are a helpful teacher. Output in HTML",0.8);
+            $response = $AI->getResponseFromOpenAi("You are a helpful teacher. Output in HTML",0.75,0,"gpt-3.5-turbo",2800);
 
             $doc = new DOMDocument();
             $doc->loadHTML($response, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
