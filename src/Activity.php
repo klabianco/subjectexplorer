@@ -158,8 +158,8 @@ class Activity
             $grade = '';
             if ($this->getGrade() != '') $grade = $this->getGrade() . '-grade';
 
-            $prompt = 'Start by writing bullet points of how the ' . $grade . ' child has learned specific concepts from the activity of "' . $this->getActivity() . '” for the subject(s) of ' . $this->getSubjectString() . '. Do not assume the child used any materials beyond those mentioned in the description.
-Then add a paragraph <p> with tips on creative ways for continued development related to the activity.
+            $prompt = 'Start by writing bullet points of how the ' . $grade . ' child has learned specific concepts from the activity of "' . $this->getActivity() . '” for the subject(s) of ' . $this->getSubjectString() . ': : 4 or 5 points per subject. Do not assume the child used any materials beyond those mentioned in the description.
+2. Then add a descriptive paragraph <p> with tips on creative ways for continued development related to the activity.
 Then add 3  '.$grade.' reading level Book Recommendatons related to the activity.
 
 HTML Format/Example:
@@ -168,7 +168,7 @@ HTML Format/Example:
 <ul>
 <li>[Analysis]</li>
 </ul>
-<p>[tips go here]</p>
+<p>[Insert tips paragraph (From step 2)]</p>
 [Book Recommendations]
 <ul id="books">
 <li><b>[Book Title]</b> by [Author]: [Short Description]</li>
