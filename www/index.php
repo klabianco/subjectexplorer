@@ -1,5 +1,9 @@
 <?php
 
+
+// permanent redirect to https://learningcorner.co/subject-explorer
+header("Location: https://learningcorner.co/subject-explorer", true, 301);
+
 require __DIR__ . '/../../vendor/autoload.php';
 
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . "/../..");
